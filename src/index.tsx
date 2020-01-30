@@ -43,7 +43,7 @@ export const withBusinessType = function <Wrapped extends BusinessTypeInjectedPr
 
 export interface Props {
     businessType: BusinessType;
-    other: string,
+    other: string;
 }
 const Component: React.FC<Props> = ({
     businessType,
@@ -56,6 +56,15 @@ const Component: React.FC<Props> = ({
         </React.Fragment>
     );
 };
+
+function foo(a: BusinessTypeInjectedProps) {
+    console.log(a.businessType);
+}
+const x: Props = {
+    businessType: {},
+    other: "foo"
+};
+foo(x);
 
 const component = withBusinessType<Props>()(Component);
 console.log(component);
