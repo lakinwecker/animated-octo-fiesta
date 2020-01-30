@@ -9,7 +9,7 @@ interface IRemoteDataProps<T> {
 
 type Success<T, InjectedProps extends object, WrappedProps extends InjectedProps> = (
     x: T,
-    WrappedComponent: React.ComponentType<WrappedProps>,
+    WrappedComponent: React.ComponentType<InjectedProps>,
     restProps: Diff<WrappedProps, InjectedProps>
 ) => JSX.Element;
 
@@ -18,7 +18,7 @@ interface Args<T, InjectedProps extends object, WrappedProps extends InjectedPro
 }
 const withRemote = <T, InjectedProps extends object, WrappedProps extends InjectedProps>
     (impl: Args<T, InjectedProps, WrappedProps>) =>
-    (WrappedComponent: React.ComponentType<WrappedProps>) => {
+    (WrappedComponent: React.ComponentType<InjectedProps>) => {
         type RestProps = Diff<WrappedProps, InjectedProps>;
         const HOC: React.FC<IRemoteDataProps<T>> = props => {
             const {remoteData, ...restProps} = props;
