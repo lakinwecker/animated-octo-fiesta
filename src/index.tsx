@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import {Diff} from "utility-types";
 
 type BusinessType = {};
@@ -7,14 +7,14 @@ interface OurProps<T> { remoteData: T }
 type Success<T, Injected extends object, Wrapped extends Injected> = (
     x: T,
     WrappedComponent: React.ComponentType<Injected>,
-    restProps: Diff<Wrapped, Injected>
+    restProps: PropsWithChildren<Diff<Wrapped, Injected>>
 ) => JSX.Element;
 
 const withRemote = <T, Injected extends object, Wrapped extends Injected>
     (success: Success<T, Injected, Wrapped>) =>
     (WrappedComponent: React.ComponentType<Injected>) => {
-        type RestProps = Diff<Wrapped, Injected>;
-        const HOC: React.FC<OurProps<T>> = props => {
+        const HOC: React.FunctionComponent<OurProps<T>> = props => {
+            type RestProps = Diff<Wrapped, Injected>;
             const {remoteData, ...restProps} = props;
 
             return success(
@@ -57,5 +57,5 @@ const Component: React.FC<Props> = ({
     );
 };
 
-const component = withBusinessType()(Component);
+const component = withBusinessType<Props>()(Component);
 console.log(component);
