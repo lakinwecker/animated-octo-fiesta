@@ -2,28 +2,22 @@ import React from "react";
 import {Diff} from "utility-types";
 
 type BusinessType = {};
+interface OurProps<T> { remoteData: T }
 
-interface IRemoteDataProps<T> {
-    remoteData: T,
-}
-
-type Success<T, InjectedProps extends object, WrappedProps extends InjectedProps> = (
+type Success<T, Injected extends object, Wrapped extends Injected> = (
     x: T,
-    WrappedComponent: React.ComponentType<WrappedProps>,
-    restProps: Diff<WrappedProps, InjectedProps>
+    WrappedComponent: React.ComponentType<Injected>,
+    restProps: Diff<Wrapped, Injected>
 ) => JSX.Element;
 
-interface Args<T, InjectedProps extends object, WrappedProps extends InjectedProps> {
-    success: Success<T, InjectedProps, WrappedProps>;
-}
-const withRemote = <T, InjectedProps extends object, WrappedProps extends InjectedProps>
-    (impl: Args<T, InjectedProps, WrappedProps>) =>
-    (WrappedComponent: React.ComponentType<WrappedProps>) => {
-        type RestProps = Diff<WrappedProps, InjectedProps>;
-        const HOC: React.FC<IRemoteDataProps<T>> = props => {
+const withRemote = <T, Injected extends object, Wrapped extends Injected>
+    (success: Success<T, Injected, Wrapped>) =>
+    (WrappedComponent: React.ComponentType<Injected>) => {
+        type RestProps = Diff<Wrapped, Injected>;
+        const HOC: React.FC<OurProps<T>> = props => {
             const {remoteData, ...restProps} = props;
 
-            return impl.success(
+            return success(
                 props.remoteData,
                 WrappedComponent,
                 restProps as RestProps
@@ -37,11 +31,31 @@ const withRemote = <T, InjectedProps extends object, WrappedProps extends Inject
 interface BusinessTypeInjectedProps {
     businessType: BusinessType,
 };
-export const withBusinessType = function <WrappedProps extends BusinessTypeInjectedProps>() {
-    return withRemote<BusinessType, BusinessTypeInjectedProps, WrappedProps>({
-        success: (businessType, WrappedComponent, restProps) => {
+export const withBusinessType = function <Wrapped extends BusinessTypeInjectedProps>() {
+    return withRemote<BusinessType, BusinessTypeInjectedProps, Wrapped>(
+        (businessType, WrappedComponent, restProps) => {
             let props = {businessType: businessType, ...restProps};
             return <WrappedComponent {...props} />;
         }
-    });
+    );
 };
+
+
+export interface Props {
+    businessType: BusinessType;
+    other: string,
+}
+const Component: React.FC<Props> = ({
+    businessType,
+}) => {
+    console.log(businessType);
+
+    return (
+        <React.Fragment>
+            <h1> Hello! </h1>
+        </React.Fragment>
+    );
+};
+
+const component = withBusinessType()(Component);
+console.log(component);
