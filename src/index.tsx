@@ -1,6 +1,5 @@
 import {Diff} from "utility-types";
 
-type BusinessType = {};
 interface OurProps<T> { remoteData: T }
 
 type Success<T, Injected extends object, Wrapped extends Injected> = (
@@ -27,6 +26,7 @@ const withRemote = <T, Injected extends object, Wrapped extends Injected>
     };
 
 
+type BusinessType = string
 interface BusinessTypeInjectedProps {
     businessType: BusinessType,
 };
@@ -44,12 +44,13 @@ export interface Props {
     businessType: BusinessType;
     otherType: string;
 }
-const Component: (props: Props) => void = ({ businessType }) => {
-    console.log(businessType);
+const Component: (props: Props) => void = ({ businessType, otherType}) => {
+    console.log(businessType + " <-> " + otherType);
 };
 
 const WrappedComponent = withBusinessType<Props>()(Component);
 // The idea here is that component will now take
 // Diff<Props, BusinessTypeInjectedProps> as its props.
-// So you only have to pass in 
+// So you only have to pass in otherType, because businessType will
+// be automatically specified
 console.log(WrappedComponent);
