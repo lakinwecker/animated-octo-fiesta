@@ -1,4 +1,3 @@
-import React, { PropsWithChildren } from "react";
 import {Diff} from "utility-types";
 
 type BusinessType = {};
@@ -6,21 +5,21 @@ interface OurProps<T> { remoteData: T }
 
 type Success<T, Injected extends object, Wrapped extends Injected> = (
     x: T,
-    WrappedComponent: React.ComponentType<Wrapped>,
-    restProps: PropsWithChildren<Diff<Wrapped, Injected>>
-) => JSX.Element;
+    WrappedComponent: (foo: Wrapped) => void,
+    restProps: Diff<Wrapped, Injected>
+) => void;
 
 const withRemote = <T, Injected extends object, Wrapped extends Injected>
     (success: Success<T, Injected, Wrapped>) =>
-    (WrappedComponent: React.ComponentType<Wrapped>) => {
-        const HOC: React.FunctionComponent<OurProps<T>> = props => {
+    (WrappedComponent: (foo: Wrapped) => void) => {
+        const HOC: (foo: OurProps<T>) => void = props => {
             type RestProps = Diff<Wrapped, Injected>;
             const {remoteData, ...restProps} = props;
 
             return success(
-                props.remoteData,
+                remoteData,
                 WrappedComponent,
-                restProps as RestProps // TODO: Why do I need this?
+                restProps as RestProps // TOOD: why is this needed?
             );
         };
 
@@ -35,7 +34,7 @@ export const withBusinessType = function <Wrapped extends BusinessTypeInjectedPr
     return withRemote<BusinessType, BusinessTypeInjectedProps, Wrapped>(
         (businessType, WrappedComponent, restProps) => {
             let props = {businessType: businessType, ...restProps};
-            return <WrappedComponent {...props} />; // TODO: Why doesn't this work?
+            WrappedComponent(props); // TODO: Why doesn't this work?
         }
     );
 };
@@ -45,16 +44,8 @@ export interface Props {
     businessType: BusinessType;
     otherType: string;
 }
-const Component: React.FC<Props> = ({
-    businessType,
-}) => {
+const Component: (props: Props) => void = ({ businessType }) => {
     console.log(businessType);
-
-    return (
-        <React.Fragment>
-            <h1> Hello! </h1>
-        </React.Fragment>
-    );
 };
 
 const WrappedComponent = withBusinessType<Props>()(Component);
