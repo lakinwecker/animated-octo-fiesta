@@ -41,7 +41,4 @@ const randomName = () => {
 };
 
 const HelloRandom = withParam1<InjectedProps, Props>(randomName)(component);
-// Diff<Props, BusinessTypeInjectedProps> as its props.
-// So you only have to pass in otherType, because businessType will
-// be automatically specified
 console.log(HelloRandom({param2: "STRABS"}));
