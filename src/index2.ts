@@ -17,7 +17,7 @@ const withParam1 = <Wrapped extends Injected>
     return (otherFunc: (fullProps: Wrapped) => void) =>
         (remainingProps: RemainingProps) => {
             const param1 = param1Generator();
-            const props = {param1: param1, ...remainingProps}; // Why do I need this cast?
+            const props: Wrapped = {param1: param1, ...remainingProps}; // Why do I need this cast?
             return otherFunc(props);
         };
 };

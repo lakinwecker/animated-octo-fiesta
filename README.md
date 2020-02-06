@@ -1,4 +1,5 @@
 ```
 yarn install
-yarn run build
+yarn run run2
+yarn run run3
 ```

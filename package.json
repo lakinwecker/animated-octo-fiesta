@@ -5,6 +5,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "run2": "tsc src/index2.ts && node src/index2.js"
+    "run2": "tsc src/index2.ts && node src/index2.js",
+    "run3": "tsc src/index3.ts && node src/index3.js"
   }
 }
