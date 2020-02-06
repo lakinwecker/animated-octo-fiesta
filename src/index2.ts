@@ -8,37 +8,29 @@ import {Diff} from "utility-types";
 // 
 // The reason why the first parameter is callback is that in the real world
 // example it's actually more complicated than this.
-const withParam1 = <Injected extends object, Wrapped extends Injected>
+interface Injected {
+    param1: string;
+};
+const withParam1 = <Wrapped extends Injected>
     (param1Generator: () => string) => {
     type RemainingProps = Diff<Wrapped, Injected>;
     return (otherFunc: (fullProps: Wrapped) => void) =>
         (remainingProps: RemainingProps) => {
             const param1 = param1Generator();
-            const props = {param1, ...remainingProps} as Wrapped; // Why do I need this cast?
+            const injected: Injected = {param1};
+            const props = {...injected, ...remainingProps} as Wrapped; // Why do I need this cast?
             return otherFunc(props);
         };
 };
 
-interface InjectedProps {
-    param1: string;
-};
 interface Props {
     param1: string;
     param2: string;
 };
 
 const component = (props: Props) => `Hello ${props.param1} from ${props.param2}`;
-function getRandomInt(max: number) {
-    return Math.floor(Math.random() * Math.floor(max));
-}
-const randomName = () => {
-    return [
-        "Lakin",
-        "Someone",
-        "Peter",
-        "Paul"
-    ][getRandomInt(3)];
-};
+const getRandomInt = (max: number) => Math.floor(Math.random() * Math.floor(max));
+const randomName = () => ["Lakin", "Someone", "Peter", "Paul"][getRandomInt(3)];
 
-const HelloRandom = withParam1<InjectedProps, Props>(randomName)(component);
+const HelloRandom = withParam1<Props>(randomName)(component);
 console.log(HelloRandom({param2: "STRABS"}));
